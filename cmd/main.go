@@ -5,13 +5,24 @@ import (
 	"math/rand"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 const (
 	listen = "172.17.0.1:6060"
 	max    = 1_000_000
+	system = "myapp"
 )
+
+type Metrics struct {
+	calls prometheus.Counter
+}
+
+var metrics = &Metrics{
+	calls: promauto.NewCounter(prometheus.CounterOpts{Namespace: system, Name: "superjob_calls"}),
+}
 
 func main() {
 	http.Handle("/metrics", promhttp.Handler())
@@ -21,6 +32,7 @@ func main() {
 
 // TODO measure me
 func superhandler(w http.ResponseWriter, r *http.Request) {
+	metrics.calls.Add(1)
 	size := rand.Int31n(max)
 	slice := make([]int, size)
 	for idx := range slice {
