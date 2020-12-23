@@ -34,12 +34,12 @@ var metrics = &Metrics{
 	duration: promauto.NewSummary(prometheus.SummaryOpts{
 		Namespace:  system,
 		Name:       "superjob_calls_duration_summary",
-		Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
+		Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.25, 0.99: 0.5},
 	}),
 	durationHistogram: promauto.NewHistogram(prometheus.HistogramOpts{
 		Namespace: system,
 		Name:      "superjob_calls_duration_histogram",
-		Buckets:   []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10},
+		Buckets:   []float64{.001, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10},
 	}),
 }
 
@@ -65,6 +65,6 @@ func superhandler(w http.ResponseWriter, r *http.Request) {
 
 	metrics.calls.Add(1)
 	metrics.sliceSize.Set(float64(size))
-	metrics.duration.Observe(float64(duration.Milliseconds()))
-	metrics.durationHistogram.Observe(float64(duration.Milliseconds()))
+	metrics.duration.Observe(duration.Seconds())
+	metrics.durationHistogram.Observe(duration.Seconds())
 }
