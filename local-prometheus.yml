@@ -12,4 +12,4 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-          - 172.17.0.1:6060
+          - 172.17.0.1:6061
