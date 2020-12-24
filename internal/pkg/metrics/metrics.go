@@ -5,7 +5,9 @@ import (
 )
 
 type Metric struct {
-	CallsCounter *prometheus.CounterVec
+	CallsCounter  *prometheus.CounterVec
+	CallsGauge    *prometheus.GaugeVec
+	CallHistogram *prometheus.HistogramVec
 }
 
 func New(namespace, subsystem string) *Metric {
@@ -17,6 +19,25 @@ func New(namespace, subsystem string) *Metric {
 				Name:        "calls_count",
 				Help:        "HelpInfo",
 				ConstLabels: prometheus.Labels{"labelKey": "labelValue"},
+			},
+			[]string{"handler"},
+		),
+		CallsGauge: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace:   namespace,
+				Subsystem:   subsystem,
+				Name:        "gauge",
+				Help:        "Gauge HelpInfo",
+				ConstLabels: prometheus.Labels{"labelKey": "labelValue"},
+			},
+			[]string{"handler"},
+		),
+		CallHistogram: prometheus.NewHistogramVec(
+			prometheus.HistogramOpts{
+				Namespace: namespace,
+				Subsystem: subsystem,
+				Name:      "histogram",
+				Help:      "histogram HelpInfo",
 			},
 			[]string{"handler"},
 		),

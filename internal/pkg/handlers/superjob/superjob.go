@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 const max = 1_000_000
@@ -21,6 +22,8 @@ func New(metrics *metrics.Metric) *Handler {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, request *http.Request) {
+	now := time.Now()
+
 	size := rand.Int31n(max)
 	slice := make([]int, size)
 	for idx := range slice {
@@ -30,4 +33,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, request *http.Request) {
 	w.Write([]byte(fmt.Sprintf("Len %d", len(slice))))
 
 	h.metrics.CallsCounter.With(prometheus.Labels{"handler": "superjob"}).Inc()
+
+	h.metrics.CallsGauge.With(prometheus.Labels{"handler": "superjob"}).Inc()
+	h.metrics.CallHistogram.With(prometheus.Labels{"handler": "superjob"}).Observe(time.Since(now).Seconds())
 }
