@@ -6,3 +6,8 @@ providers:
    type: file
    options:
      path: /etc/grafana/provisioning/dashboards/go.json
+ - name: 'GO-1'
+   folder: 'Go'
+   type: file
+   options:
+     path: /etc/grafana/provisioning/dashboards/go1.json
